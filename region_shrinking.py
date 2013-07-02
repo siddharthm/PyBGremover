@@ -449,157 +449,18 @@ def getThresholdColor(img2):
 	img.thumbnail((XX,YY),Image.ANTIALIAS)
 	img=img.convert('LA')
 	pixels=img.load()
-	lst=[pixels[i,j][0] for (i,j) in itertools.product(range(XX),range(YY)) ]
-	diff=max(lst)-min(lst)
-	return diff/10
+	thres=np.zeros((2,2))
+	lst1=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2),range(YY/2)) ]
+	lst2=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2,XX),range(YY/2)) ]
+	lst3=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2),range(YY/2,YY)) ]
+	lst4=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2,XX),range(YY/2,YY)) ]
 
-def region_shrink4(img,XX,YY):
-	mat_color=img.load()
-	pixels=img.convert('LA').load()
-	toMove=np.zeros((XX,YY),dtype=np.int8)
-	toMove2=np.zeros((XX,YY),dtype=np.int8)
-	bg=Image.new("LA",(XX,YY))
-	bg2=Image.new("LA",(XX,YY))
-	mat=bg.load()
-	mat2=bg2.load()
-	
-	thresC=getThresholdColor(img)
+	thres[0,0]=max(lst1)-min(lst1)
+	thres[1,0]=max(lst2)-min(lst2)
+	thres[0,1]=max(lst3)-min(lst3)
+	thres[1,1]=max(lst4)-min(lst4)
 
-	for x in range(XX):
-		for y in range(YY):
-			mat[x,y]=pixels[x,y]
-			mat2[x,y]=pixels[x,y]
-			
-	for y in range(YY):
-		toMove[0,y]=1
-		toMove[XX-1,y]=1	
-	for x in range(XX):
-		toMove2[x,0]=1
-		toMove2[x,YY-1]=1	
-	# Shrink Boundary
-
-	x1=0
-	x2=XX-1
-	truevar=True
-	trans=0
-	while truevar:
-		for y in range(YY):
-			if toMove[x1,y]==1:
-				toMove[x1,y]=2
-				if shouldMove(mat[x1,y],mat[x1+1,y],thresC):
-					toMove[x1+1,y]=1
-					toMove[x1,y]=0
-				if y-1>=0:
-					if shouldMove(mat[x1,y],mat[x1+1,y-1],thresC):
-						toMove[x1+1,y-1]=1
-				if y+1<YY:
-					if shouldMove(mat[x1,y],mat[x1+1,y+1],thresC):
-						toMove[x1+1,y+1]=1
-				temp1=list(mat[x1,y])
-				temp1[1]=trans
-				mat[x1,y]=tuple(temp1)
-				if mat[x1+1,y][-1]==0:
-					toMove[x1,y]=0
-					
-						
-		x1+=1
-		for y in range(YY):
-			if toMove[x2,y]==1:
-				toMove[x2,y]=3
-				if shouldMove(mat[x2,y],mat[x2-1,y],thresC):
-					toMove[x2-1,y]=1
-					toMove[x2,y]=0
-				if y-1>=0:
-					if shouldMove(mat[x2,y],mat[x2-1,y-1],thresC):
-						toMove[x2-1,y-1]=1	
-				if y+1<YY:
-					if shouldMove(mat[x2,y],mat[x2-1,y+1],thresC):
-						toMove[x2-1,y+1]=1
-				temp1=list(mat[x2,y])
-				temp1[1]=trans
-				mat[x2,y]=tuple(temp1)
-				if mat[x2-1,y][-1]==0:
-					toMove[x2,y]=0
-		x2-=1
-		truevar=False
-		for y in range(YY):
-			if toMove[x1,y]==1 or toMove[x2,y]==1:
-				truevar=True
-				break
-
-	y1=0
-	y2=YY-1
-	truevar=True
-	trans=0
-	while truevar:
-		for x in range(XX):
-			if toMove2[x,y1]==1:
-				toMove2[x,y1]=4
-				if shouldMove(mat2[x,y1],mat2[x,y1+1],thresC):
-					toMove2[x,y1+1]=1
-					toMove2[x,y1]=0
-				if x-1>=0:
-					if shouldMove(mat2[x,y1],mat2[x-1,y1+1],thresC):
-						toMove2[x-1,y1+1]=1
-				if x+1<XX:
-					if shouldMove(mat2[x,y1],mat2[x+1,y1+1],thresC):
-						toMove2[x+1,y1+1]=1
-				temp1=list(mat2[x,y1])
-				temp1[1]=trans
-				mat2[x,y1]=tuple(temp1)
-				if mat2[x,y1+1][-1]==0:
-					toMove2[x,y1]=0
-		y1+=1
-
-		for x in range(XX):
-			if toMove2[x,y2]==1:
-				toMove2[x,y2]=5
-				if shouldMove(mat2[x,y2],mat2[x,y2-1],thresC):
-					toMove2[x,y2-1]=1
-					toMove2[x,y2]=0
-				if x-1>=0:
-					if shouldMove(mat2[x,y2],mat2[x-1,y2-1],thresC):
-						toMove2[x-1,y2-1]=1
-				if x+1<XX:
-					if shouldMove(mat2[x,y2],mat2[x+1,y2-1],thresC):
-						toMove2[x+1,y2-1]=1
-				temp1=list(mat2[x,y2])
-				temp1[1]=trans
-				mat2[x,y2]=tuple(temp1)
-				if mat2[x,y2-1][-1]==0:
-					toMove2[x,y2]=0
-
-		y2-=1
-		truevar=False
-		for x in range(XX):
-			if toMove2[x,y1]==1 or toMove2[x,y2]==1:
-				truevar=True
-				break
-
-		
-
-
-	# End Shrinking
-
-	# Glow Code
-	
-		# Finding index of all forward boundaries
-
-
-	# End Glow
-	bg3=Image.new("RGBA",(XX,YY))
-	mat3=bg3.load()
-	for x in range(XX):
-		for y in range(YY):
-			if mat[x,y]==mat2[x,y] and mat[x,y][1]>0 and mat2[x,y][1]>0:
-				mat3[x,y]=tuple(list(mat_color[x,y])+[255])
-			else:
-				mat3[x,y]=(0,0,0,0)
-	mat3,toMove,toMove2=remove_noise(mat3,XX,YY,toMove,toMove2)
-	mat3,boundary=radial_glow(mat3,XX,YY,toMove,toMove2)	
-#	bg.save(out_dir+"/.png","PNG")
-	return bg3,thresC
-
+	return thres
 
 def region_shrink3(img,XX,YY):
 	mat_color=img.load()
