@@ -194,7 +194,13 @@ def genBoundary(mat,XX,YY):
 					km+=1
 				if k<km and k>0:
 					bound[x,y]=1
-					mat[x,y]=(0,0,0,255)
+	indexs=np.where(bound==1)
+	for i in range(len(indexs[0])):
+		x,y=int(indexs[0][i]),int(indexs[1][i])
+		for x1,y1 in crossNeighbours(x,y,XX,YY):
+			if mat[x1,y1][-1]==0:
+				bound[x1,y1]=1	
+	
 	return bound
 
 	"""
@@ -455,11 +461,19 @@ def getThresholdColor(img2):
 	lst3=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2),range(YY/2,YY)) ]
 	lst4=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2,XX),range(YY/2,YY)) ]
 
-	thres[0,0]=max(lst1)-min(lst1)
-	thres[1,0]=max(lst2)-min(lst2)
-	thres[0,1]=max(lst3)-min(lst3)
-	thres[1,1]=max(lst4)-min(lst4)
-
+	thres[0,0]=(max(lst1)-min(lst1))/10.0+2.0
+	thres[1,0]=(max(lst2)-min(lst2))/10.0+2.0
+	thres[0,1]=(max(lst3)-min(lst3))/10.0+2.0
+	thres[1,1]=(max(lst4)-min(lst4))/10.0+2.0
+	
+	"""
+	lst=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2),range(YY/2)) ]
+	thr=(max(lst)-min(lst))/10.0
+	thres[0,0]=thr
+	thres[0,1]=thr
+	thres[1,0]=thr
+	thres[1,1]=thr
+	"""
 	return thres
 
 def region_shrink3(img,XX,YY):
@@ -472,7 +486,7 @@ def region_shrink3(img,XX,YY):
 	mat=bg.load()
 	mat2=bg2.load()
 	
-	thresC=getThresholdColor(img)
+	thresMat=getThresholdColor(img)
 
 	for x in range(XX):
 		for y in range(YY):
@@ -492,8 +506,15 @@ def region_shrink3(img,XX,YY):
 	truevar=True
 	trans=0
 	while truevar:
-	
+		l1,l2=0,0
+		p1,p2=0,0
+		
 		for y in range(YY):
+			if x1>XX/2:
+				l1=1
+			if y>YY/2:
+				l2=1
+			thresC=thresMat[l1,l2]
 			if toMove[x1,y]==1:
 				toMove[x1,y]=2
 				if shouldMove(mat[x1,y],mat[x1+1,y],thresC):
@@ -514,6 +535,11 @@ def region_shrink3(img,XX,YY):
 						
 		x1+=1
 		for y in range(YY):
+			if x2>XX/2:
+				p1=1
+			if y>YY/2:
+				p2=1
+			thresC=thresMat[p1,p2]
 			if toMove[x2,y]==1:
 				toMove[x2,y]=3
 				if shouldMove(mat[x2,y],mat[x2-1,y],thresC):
@@ -542,7 +568,15 @@ def region_shrink3(img,XX,YY):
 	truevar=True
 	trans=0
 	while truevar:
+		l1,l2=0,0
+		p1,p2=0,0
+
 		for x in range(XX):
+			if x>XX/2:
+				l1=1
+			if y1>YY/2:
+				l2=1
+			thresC=thresMat[l1,l2]
 			if toMove2[x,y1]==1:
 				toMove2[x,y1]=4
 				if shouldMove(mat2[x,y1],mat2[x,y1+1],thresC):
@@ -562,6 +596,11 @@ def region_shrink3(img,XX,YY):
 		y1+=1
 
 		for x in range(XX):
+			if x>XX/2:
+				p1=1
+			if y2>YY/2:
+				p2=1
+			thresC=thresMat[p1,p2]
 			if toMove2[x,y2]==1:
 				toMove2[x,y2]=5
 				if shouldMove(mat2[x,y2],mat2[x,y2-1],thresC):

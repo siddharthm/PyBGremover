@@ -32,7 +32,7 @@ def toSuspect(img,omg):
 		if bg==(la*int((pixel1[x,y][0]+plus)/la)):
 			count+=1
 		count2+=1
-	if count>(count2/200):
+	if count>(count2/300):
 		return True
 	return False
 		
@@ -63,14 +63,17 @@ def main(in_folder,out_folder):
 		for image in filenames:
 			imagename=image.split(".")[0]
 			print "Now doing image:",image
-			img=Image.open(dirname+image)
+			img=Image.open(dirname+"/"+image)
 			if not os.path.exists(out_folder+"/"+imagename+".png") and not os.path.exists(out_folder+"/suspect/"+imagename+".png"):
+				img2=Image.new(mode="RGBA",size=(img.size[0]*2,img.size[1]))
 				omg,thresc=rs.region_shrink3(img,img.size[0],img.size[1])
+				img2.paste(img,(0,0))
+				img2.paste(omg,(img.size[0],0))
 				if toSuspect(img,omg):
 					print "\tSuspected"
-					omg.save(out_folder+"/suspect/"+imagename+".png","PNG")
+					img2.save(out_folder+"/suspect/"+imagename+".png","PNG")
 				else:
-					omg.save(out_folder+"/"+imagename+".png","PNG")
+					img2.save(out_folder+"/"+imagename+".png","PNG")
 
 
 if __name__=="__main__":
