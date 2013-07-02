@@ -461,10 +461,10 @@ def getThresholdColor(img2):
 	lst3=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2),range(YY/2,YY)) ]
 	lst4=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2,XX),range(YY/2,YY)) ]
 
-	thres[0,0]=(max(lst1)-min(lst1))/10.0+1.0
-	thres[1,0]=(max(lst2)-min(lst2))/10.0+1.0
-	thres[0,1]=(max(lst3)-min(lst3))/10.0+1.0
-	thres[1,1]=(max(lst4)-min(lst4))/10.0+1.0
+	thres[0,0]=(max(lst1)-min(lst1))/10.0+2.0
+	thres[1,0]=(max(lst2)-min(lst2))/10.0+2.0
+	thres[0,1]=(max(lst3)-min(lst3))/10.0+2.0
+	thres[1,1]=(max(lst4)-min(lst4))/10.0+2.0
 	
 	"""
 	lst=[pixels[i,j][0] for (i,j) in itertools.product(range(XX/2),range(YY/2)) ]
