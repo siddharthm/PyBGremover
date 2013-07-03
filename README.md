@@ -21,7 +21,7 @@ all suspect images into it, then after manual processing deletes the image from 
 Here's a screenshot of the app, the sample image here is from the output of region_shrinking.py
 The image used is from http://photosinbox.com/photos/white-coffee-cup
 
-<p style="text-align:center;"><img src="/home/siddharth/Downloads/ID-10080180.jpg" style="text-align:center;" alt="Screenshot" /></p>
+<p style="text-align:center;"><img src="https://dl.dropboxusercontent.com/u/32781196/Screenshot%20from%202013-07-03%2012%3A54%3A23.png" style="text-align:center;" alt="Screenshot" /></p>
 
 #### The applications require the following additional libraries:
   * PIL
