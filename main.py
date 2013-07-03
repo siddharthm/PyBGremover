@@ -13,6 +13,9 @@ except:
 import os
 import itertools
 
+# parameters for setting the color bucket
+# la is the size of bucket
+# plus is the amt added to color so that the colors near 255 have a filled bucket
 
 la=7
 plus=3
@@ -32,7 +35,7 @@ def toSuspect(img,omg):
 		if bg==(la*int((pixel1[x,y][0]+plus)/la)):
 			count+=1
 		count2+=1
-	if count>(count2/300):
+	if count>(count2/200):
 		return True
 	return False
 		
@@ -65,15 +68,15 @@ def main(in_folder,out_folder):
 			print "Now doing image:",image
 			img=Image.open(dirname+"/"+image)
 			if not os.path.exists(out_folder+"/"+imagename+".png") and not os.path.exists(out_folder+"/suspect/"+imagename+".png"):
-				img2=Image.new(mode="RGBA",size=(img.size[0]*2,img.size[1]))
+				#img2=Image.new(mode="RGBA",size=(img.size[0]*2,img.size[1]))
 				omg,thresc=rs.region_shrink3(img,img.size[0],img.size[1])
-				img2.paste(img,(0,0))
-				img2.paste(omg,(img.size[0],0))
+				#img2.paste(img,(0,0))
+				#img2.paste(omg,(img.size[0],0))
 				if toSuspect(img,omg):
 					print "\tSuspected"
-					img2.save(out_folder+"/suspect/"+imagename+".png","PNG")
+					omg.save(out_folder+"/suspect/"+imagename+".png","PNG")
 				else:
-					img2.save(out_folder+"/"+imagename+".png","PNG")
+					omg.save(out_folder+"/"+imagename+".png","PNG")
 
 
 if __name__=="__main__":

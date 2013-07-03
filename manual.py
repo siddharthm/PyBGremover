@@ -8,6 +8,7 @@ if __name__=="__main__":
 		in_folder=argv[1]
 	except:
 		print "Please provide input folder name as arguments"
+		exit()
 	print "Press Ctrl+C and wait to exit in middle"
 	base=in_folder+"/suspect/"
 	if not os.path.exists(base):
@@ -16,6 +17,6 @@ if __name__=="__main__":
 	for dirname,dirs,filenames in os.walk(base):
 		for image in filenames:
 			print "Starting app for: ",image		
-			main(base+image,"test/"+image)
+			main(base+image,in_folder+"/"+image)
 			print "\tDeleting original file"
-			#os.remove(base+image)
+			os.remove(base+image)
