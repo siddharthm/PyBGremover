@@ -2,7 +2,7 @@ Python Background Removal Tool
 ===========
 
 PyBGremover is a python tool that helps you remove background from images which have near same colour e.g a wall like background.
-This project was created for eliminating background from a specific data set of 40,000+ images and thus may not work on all images.
+This project was created for eliminating background from a data set of 40,000+ specific kind of images and thus may not work on all kind of images.
 
 ## The project has two independent apps:
 
